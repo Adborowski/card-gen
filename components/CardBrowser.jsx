@@ -13,8 +13,11 @@ const CardBrowser = () => {
     const cardsRef = ref(database, "cards/");
     onValue(cardsRef, (snapshot) => {
       const data = snapshot.val();
-      console.log(Object.values(data));
-      setCards(Object.values(data));
+
+      const sortedCards = Object.values(data).sort(
+        (a, b) => new Date(b.creationDate) - new Date(a.creationDate)
+      );
+      setCards(sortedCards);
     });
   }, []);
 

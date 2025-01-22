@@ -1,12 +1,17 @@
 import { database } from "@/util/firebase";
 import { ref, set } from "firebase/database";
 
-export const deleteCard = async (cardId) => {
-  set(ref(database, `/cards/${cardId}`), null)
+export const deleteCard = async (card) => {
+  set(ref(database, `/cards-deleted/${card.id}`), {
+    ...card,
+    dateDeleted: new Date().toUTCString(),
+  });
+
+  set(ref(database, `/cards/${card.id}`), null)
     .then(() => {
-      console.log("deleted card", cardId);
+      console.log("deleted card", card.id);
     })
     .catch((e) => {
-      console.log("failed to delete card", cardId, "//////", e.message);
+      console.log("failed to delete card", card.id, "//////", e.message);
     });
 };

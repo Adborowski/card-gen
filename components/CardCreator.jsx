@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styles from "./CardCreator.module.css";
 import { createCard } from "@/util/cardFunctions";
 import IonIcon from "@reacticons/ionicons";
@@ -18,8 +18,12 @@ const CardCreator = () => {
   };
   return (
     <div className={styles.cardCreatorWrapper}>
-      <button onClick={handleClick} className={styles.btnCreateCard}>
-        Stwórz Kartę
+      <button
+        disabled={loading}
+        onClick={handleClick}
+        className={styles.btnCreateCard}
+      >
+        Create Card
       </button>
       {loading && (
         <div className={styles.iconWrapper}>

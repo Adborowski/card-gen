@@ -1,4 +1,4 @@
-export const roll = (array, filters) => {
+export const roll = (array, filters, options) => {
   // filters is an arr of objects; currently supports a single exact match per key
   // const exampleFilters = [{ gender: 1 }];
   let filteredArray = array;
@@ -16,5 +16,16 @@ export const roll = (array, filters) => {
   }
 
   const index = Math.floor(Math.random() * filteredArray.length);
-  return filteredArray[index];
+  let result = filteredArray[index];
+
+  if (result.word) {
+    result.word = capitalize(result.word);
+  }
+  return result;
+};
+
+const capitalize = (str) => {
+  const capitalized = str.charAt(0).toUpperCase() + str.slice(1);
+
+  return capitalized;
 };

@@ -11,22 +11,27 @@ const Card = ({ cardData }) => {
     return <>no data</>;
   }
 
-  const { name, description, stats, image, id } = cardData;
+  const { name, description, stats, image, id, imageStyle } = cardData;
 
   const handleDelete = async () => {
-    deleteCard(id);
+    deleteCard(cardData);
   };
+
+  const cardLevel = Math.floor((stats.attack + stats.defence) / 500);
 
   return (
     <div className={styles.cardWrapper}>
-      <button className={styles.btnDeleteCard} onClick={handleDelete}>
-        {" "}
-        Delete
-      </button>
+      <div className={styles.extras}>
+        <span>Level {cardLevel}</span>
+        <span>{imageStyle}</span>
+        <span className={styles.btnDeleteCard} onClick={handleDelete}>
+          Delete
+        </span>
+      </div>
       <div className={styles.imgWrapper}>
         <Image
-          width={300}
-          height={200}
+          width={448}
+          height={256}
           className={styles.cardImage}
           src={image ?? "/dummy.jpg"}
           alt="card image"
@@ -38,6 +43,7 @@ const Card = ({ cardData }) => {
           <span>{name}</span>
         </h2>
         <div className={styles.description}>{description}</div>
+
         <div className={styles.stats}>
           <span className={`${styles.stat} ${styles.statAttack}`}>
             <div className={styles.iconWrapper}>

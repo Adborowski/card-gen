@@ -1,7 +1,7 @@
 "use server";
 
 import { getDatabase, ref as dbRef, set } from "firebase/database";
-import { adjectives, nouns } from "./words";
+import { adjectives, nouns, properNouns, gerundVerbs } from "./words";
 import { roll } from "@/util/util";
 import OpenAI from "openai";
 import { v4 } from "uuid";
@@ -12,10 +12,18 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const db = getDatabase(firebase);
 
 const getCardName = () => {
-  const adjective = roll(adjectives);
-  const cardGender = adjective.gender; // for PL language purposes
-  const noun = roll(nouns, [{ gender: cardGender }]);
-  return `${adjective.word} ${noun.word}`;
+  const nameModels = [
+    `${roll(nouns).word} of the ${roll(nouns).word}`, // noun of the noun
+    `${roll(adjectives).word} ${roll(nouns).word}`, // nouny noun
+    `${roll(adjectives).word} ${roll(nouns).word} of ${roll(properNouns).word}`, // nouny noun of Nouna
+    `${roll(gerundVerbs).word} ${roll(nouns).word}`, // nouning noun
+    `${roll(gerundVerbs).word} ${roll(adjectives).word} ${roll(nouns).word}`, // nouning nouny noun
+    `The ${roll(gerundVerbs).word} ${roll(nouns).word}`, // the verbing noun
+  ];
+
+  const cardName = roll(nameModels);
+
+  return cardName;
 };
 
 const getCardDescription = async (cardName) => {
@@ -24,7 +32,7 @@ const getCardDescription = async (cardName) => {
     messages: [
       {
         role: "system",
-        content: `You are a fantasy writer. Your job is to create short descriptions for playing cards. Max 200 characters. You work with an input that is a name in Polish, and your description should be in Polish and should fit the name. The next message is the name of the card. Do not repeat the name of the card in the description. The name of the card is ${cardName}`,
+        content: `You are a fantasy writer. Your job is to create short descriptions for playing cards. Max 200 characters. Do not make a list. Do not repeat the name of the card in the description. The name of the card is ${cardName}.`,
       },
     ],
     store: true,
@@ -33,28 +41,34 @@ const getCardDescription = async (cardName) => {
   return description.choices[0].message.content;
 };
 
-const getIllustrationStyle = () => {
-  const availableStyles = [
-    "fantasy book style",
-    "realistic style",
-    "cave drawing style",
-    "comic book style",
+const getArtStyle = () => {
+  const styles = [
+    "Impressionism",
+    "Expressionism",
+    "Pointillism",
+    "Cubism",
+    "Charcoal Sketch",
+    "Realism",
   ];
-  const result = roll(availableStyles);
-  console.log("rolled style:", result);
-  return roll(availableStyles);
+
+  const result = roll(styles);
+  return result;
 };
 
 const getCardImage = async (cardName, cardDescription, cardId) => {
   let url;
 
-  const prompt = `You are a professional illustrator. You will receive a prompt in Polish with a name. Illustrate the name. Use style - ${getIllustrationStyle()}. Use a landscape background. Fill the whole frame. Your prompt name is ${cardName}.`;
+  const imgStyle = getArtStyle();
+  const prompt = `You are a professional visual artist. You know all the art in the world. Create an artwork which depicts a ${cardName}. Use this description: ${cardDescription}. Use this style: ${imgStyle} Fill the whole frame. No typography.`;
+
+  console.log(cardName.toUpperCase() + ` (${imgStyle})`);
+  console.log(cardDescription);
 
   const response = await openai.images.generate({
     model: "dall-e-3",
     prompt: prompt,
     n: 1,
-    size: "1792x1024",
+    size: "1024x1024",
   });
 
   url = response.data[0].url;
@@ -66,16 +80,19 @@ const getCardImage = async (cardName, cardDescription, cardId) => {
 
   const blob = await fetch(url).then((r) => r.blob());
   const filename = `${cardId}.png`;
-  const creationDate = new Date().toLocaleDateString();
 
   const metadata = {
     cardId: cardId,
     cardName: cardName,
-    creationDate: creationDate,
     imagePrompt: prompt,
+    imageStyle: imgStyle,
   };
 
-  return storeImage(blob, filename, metadata);
+  return {
+    imageUrl: await storeImage(blob, filename, metadata),
+    imagePrompt: prompt,
+    imageStyle: imgStyle,
+  };
 };
 
 const getCardStats = () => {
@@ -87,15 +104,19 @@ const getCardStats = () => {
 };
 
 export const createCard = async () => {
+  const creationDate = new Date().toUTCString();
   const id = v4();
   const name = getCardName();
   const description = await getCardDescription(name);
   const image = await getCardImage(name, description, id);
+
   const newCard = {
     id: id,
     name: name,
     description: description,
-    image: image,
+    image: image.imageUrl,
+    imagePrompt: image.imagePrompt,
+    imageStyle: image.imageStyle,
     stats: getCardStats(),
     creationDate: creationDate,
   };
