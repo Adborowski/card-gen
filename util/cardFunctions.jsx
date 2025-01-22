@@ -13,21 +13,10 @@ import { roll } from "@/util/util";
 import OpenAI from "openai";
 import { v4 } from "uuid";
 import { storeImage } from "@/util/storageFunctions";
+import { firebase } from "@/util/firebase";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCrvsdYYYuVCj1PXjo9rihEme9s9br0HiU",
-  authDomain: "card-gen-d8781.firebaseapp.com",
-  databaseURL:
-    "https://card-gen-d8781-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "card-gen-d8781",
-  storageBucket: "card-gen-d8781.firebasestorage.app",
-  messagingSenderId: "616970030517",
-  appId: "1:616970030517:web:9d9f906172a31271ac5dfc",
-};
-
-const firebase = initializeApp(firebaseConfig);
 const storage = getStorage(firebase);
 const db = getDatabase(firebase);
 
