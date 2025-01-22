@@ -1,16 +1,24 @@
 .cardCreatorWrapper {
-  margin-bottom: 24px;
   display: flex;
   flex-direction: row;
 }
 
 .btnCreateCard {
-  padding: 12px 36px;
+  padding: 6px;
+
   background-color: lightsalmon;
-  font-size: 18px;
+  font-size: 14px;
   border: 0;
   border-radius: 6px;
   cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.btnCreateCard span {
+  display: block;
 }
 
 .btnCreateCard:hover {

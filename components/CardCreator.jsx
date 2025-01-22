@@ -23,7 +23,7 @@ const CardCreator = () => {
         onClick={handleClick}
         className={styles.btnCreateCard}
       >
-        Create Card
+        <span>Create Card</span>
       </button>
       {loading && (
         <div className={styles.iconWrapper}>

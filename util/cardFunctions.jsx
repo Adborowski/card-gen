@@ -7,6 +7,7 @@ import OpenAI from "openai";
 import { v4 } from "uuid";
 import { storeImage } from "@/util/storageFunctions";
 import { firebase } from "@/util/firebase";
+import { getCardLevel } from "@/util/util";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const db = getDatabase(firebase);
@@ -16,7 +17,6 @@ const getCardName = () => {
     `${roll(nouns).word} of the ${roll(nouns).word}`, // noun of the noun
     `${roll(adjectives).word} ${roll(nouns).word}`, // nouny noun
     `${roll(adjectives).word} ${roll(nouns).word} of ${roll(properNouns).word}`, // nouny noun of Nouna
-    `${roll(gerundVerbs).word} ${roll(nouns).word}`, // nouning noun
     `${roll(gerundVerbs).word} ${roll(adjectives).word} ${roll(nouns).word}`, // nouning nouny noun
     `The ${roll(gerundVerbs).word} ${roll(nouns).word}`, // the verbing noun
   ];
@@ -47,7 +47,6 @@ const getArtStyle = () => {
     "Expressionism",
     "Pointillism",
     "Cubism",
-    "Charcoal Sketch",
     "Realism",
   ];
 
@@ -107,6 +106,7 @@ export const createCard = async () => {
   const creationDate = new Date().toUTCString();
   const id = v4();
   const name = getCardName();
+  const stats = getCardStats();
   const description = await getCardDescription(name);
   const image = await getCardImage(name, description, id);
 
@@ -117,7 +117,8 @@ export const createCard = async () => {
     image: image.imageUrl,
     imagePrompt: image.imagePrompt,
     imageStyle: image.imageStyle,
-    stats: getCardStats(),
+    stats: stats,
+    level: getCardLevel(stats),
     creationDate: creationDate,
   };
 

@@ -29,3 +29,8 @@ const capitalize = (str) => {
 
   return capitalized;
 };
+
+export const getCardLevel = (stats) => {
+  const cardLevel = Math.floor((stats.attack + stats.defence) / 500);
+  return cardLevel;
+};

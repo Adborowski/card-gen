@@ -6,6 +6,7 @@
   position: relative;
   transition: 0.3s all ease;
   transform: scale(1);
+  background-color: white;
 }
 
 .cardWrapper:hover {
