@@ -1,12 +1,5 @@
 "use server";
 
-import { initializeApp } from "firebase/app";
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from "firebase/storage";
 import { getDatabase, ref as dbRef, set } from "firebase/database";
 import { adjectives, nouns } from "./words";
 import { roll } from "@/util/util";
@@ -16,11 +9,7 @@ import { storeImage } from "@/util/storageFunctions";
 import { firebase } from "@/util/firebase";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-const storage = getStorage(firebase);
 const db = getDatabase(firebase);
-
-let storageRef = ref(storage);
 
 const getCardName = () => {
   const adjective = roll(adjectives);
@@ -44,11 +33,26 @@ const getCardDescription = async (cardName) => {
   return description.choices[0].message.content;
 };
 
+const getIllustrationStyle = () => {
+  const availableStyles = [
+    "fantasy book style",
+    "realistic style",
+    "cave drawing style",
+    "comic book style",
+  ];
+  const result = roll(availableStyles);
+  console.log("rolled style:", result);
+  return roll(availableStyles);
+};
+
 const getCardImage = async (cardName, cardDescription, cardId) => {
   let url;
+
+  const prompt = `You are a professional illustrator. You will receive a prompt in Polish with a name. Illustrate the name. Use style - ${getIllustrationStyle()}. Use a landscape background. Fill the whole frame. Your prompt name is ${cardName}.`;
+
   const response = await openai.images.generate({
     model: "dall-e-3",
-    prompt: `You will create an illustration. You will receive a prompt in Polish with a name. Illustrate the name. Use a fantasy book style. Use a landscape background. Fill the whole frame. Your prompt name is ${cardName}.`,
+    prompt: prompt,
     n: 1,
     size: "1792x1024",
   });
@@ -62,11 +66,13 @@ const getCardImage = async (cardName, cardDescription, cardId) => {
 
   const blob = await fetch(url).then((r) => r.blob());
   const filename = `${cardId}.png`;
+  const creationDate = new Date().toLocaleDateString();
 
   const metadata = {
     cardId: cardId,
     cardName: cardName,
-    creationDate: new Date(),
+    creationDate: creationDate,
+    imagePrompt: prompt,
   };
 
   return storeImage(blob, filename, metadata);
@@ -91,6 +97,7 @@ export const createCard = async () => {
     description: description,
     image: image,
     stats: getCardStats(),
+    creationDate: creationDate,
   };
 
   set(dbRef(db, "cards/" + id), newCard);

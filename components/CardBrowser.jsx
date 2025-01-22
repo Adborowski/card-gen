@@ -1,16 +1,20 @@
 "use client";
 import React from "react";
 import { useState, useEffect } from "react";
-import { getCards } from "@/util/databaseFunctions";
 import styles from "./CardBrowser.module.css";
 import Card from "@/components/Card";
+import { database } from "@/util/firebase";
+import { ref, onValue } from "firebase/database";
 
 const CardBrowser = () => {
   const [cards, setCards] = useState([]);
 
   useEffect(() => {
-    getCards().then((cardsData) => {
-      setCards(Object.values(cardsData).reverse()); // newest to oldest (temporary)
+    const cardsRef = ref(database, "cards/");
+    onValue(cardsRef, (snapshot) => {
+      const data = snapshot.val();
+      console.log(Object.values(data));
+      setCards(Object.values(data));
     });
   }, []);
 

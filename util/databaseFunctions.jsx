@@ -1,20 +1,12 @@
-export const database = getDatabase(firebase);
-import { getDatabase, ref, set, child, get, onValue } from "firebase/database";
-import { firebase } from "@/util/firebase";
+import { database } from "@/util/firebase";
+import { ref, set } from "firebase/database";
 
-export const getCards = async () => {
-  console.log("getting cards...");
-  const dbRef = ref(getDatabase());
-
-  const snapshot = await get(child(dbRef, "cards/"));
-
-  let cardsData = {};
-
-  if (snapshot.exists()) {
-    cardsData = snapshot.val();
-  } else {
-    console.log("no data");
-  }
-
-  return cardsData;
+export const deleteCard = async (cardId) => {
+  set(ref(database, `/cards/${cardId}`), null)
+    .then(() => {
+      console.log("deleted card", cardId);
+    })
+    .catch((e) => {
+      console.log("failed to delete card", cardId, "//////", e.message);
+    });
 };

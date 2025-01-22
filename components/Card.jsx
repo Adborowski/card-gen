@@ -4,26 +4,29 @@ import React from "react";
 import styles from "./Card.module.css";
 import Image from "next/image";
 import IonIcon from "@reacticons/ionicons";
+import { deleteCard } from "@/util/databaseFunctions";
 
 const Card = ({ cardData }) => {
-  const exampleCard = {
-    name: "Example Card",
-    description: "Lorem Ipsum Solor Dit Amet",
-    stats: {
-      attack: 1000,
-      defence: 1000,
-    },
-  };
+  if (!cardData) {
+    return <>no data</>;
+  }
 
-  const { name, description, stats, image } = cardData ?? exampleCard;
+  const { name, description, stats, image, id } = cardData;
+
+  const handleDelete = async () => {
+    deleteCard(id);
+  };
 
   return (
     <div className={styles.cardWrapper}>
+      <button className={styles.btnDeleteCard} onClick={handleDelete}>
+        {" "}
+        Delete
+      </button>
       <div className={styles.imgWrapper}>
         <Image
           width={300}
           height={200}
-          // fill={true}
           className={styles.cardImage}
           src={image ?? "/dummy.jpg"}
           alt="card image"
