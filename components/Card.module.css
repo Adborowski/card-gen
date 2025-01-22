@@ -1,0 +1,98 @@
+.cardWrapper {
+  max-width: calc(6 * 45px);
+  border: 1px solid black;
+  padding: 12px;
+  border-radius: 6px;
+  position: relative;
+}
+
+.imgWrapper {
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.cardImage {
+  object-fit: cover;
+  display: block;
+}
+
+.name {
+  font-size: 18px;
+  border-radius: 6px;
+  text-align: center;
+  height: 2.5em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-transform: capitalize;
+}
+
+.name span {
+  display: block;
+}
+
+.description {
+  height: calc(6 * 15px);
+}
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 12px;
+  grid-gap: 6px;
+}
+
+.stat {
+  padding: 6px;
+  text-align: center;
+  background-color: #dadada;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.stat .iconWrapper {
+  width: 32px !important;
+  height: 32px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-right: 3px;
+}
+
+.stat .iconWrapper svg {
+  padding: 3px;
+}
+.statTextWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.statAttack {
+  background-color: lightpink;
+}
+
+.statAttack .iconWrapper {
+  transform: rotate(90deg);
+}
+
+.statDefence {
+  background-color: lightblue;
+}
+
+.controls {
+  margin-top: 12px;
+}
+
+.controls > * {
+  margin-right: 6px;
+  border: 0;
+  padding: 12px;
+  border-radius: 3px;
+  cursor: pointer;
+}

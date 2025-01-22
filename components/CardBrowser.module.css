@@ -1,0 +1,7 @@
+.cardBrowserWrapper {
+  display: flex;
+  flex-direction: row;
+  /* justify-content: center; */
+  grid-gap: 24px;
+  flex-wrap: wrap;
+}

@@ -1,0 +1,9 @@
+[
+  {
+    "id": "666b08fd-c9db-4f56-8018-a1f35011f623",
+    "name": "kolczasta gazela",
+    "description": "Zwinne stworzenie z ziemi cierni, porusza się z wdziękiem, lecz uważaj, jej kolce skrywają nieoczekiwaną obronę. Idealna do szybkich ataków.",
+    "image": "https://firebasestorage.googleapis.com/v0/b/card-gen-d8781.firebasestorage.app/o/666b08fd-c9db-4f56-8018-a1f35011f623.png?alt=media&token=f6db9fce-f87a-4a4a-b486-5a1e27fa2910",
+    "stats": { "attack": 200, "defence": 2900 }
+  }
+]
